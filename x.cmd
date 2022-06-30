@@ -1,6 +1,6 @@
 ::
 :: run Bpdf.class file
-:: %1 pdf-file name for slicing / dir with such files
+:: %1 pdf-filename for slicing / dir with such files
 ::
 @SET CMDPATH=%~dp0
 @SET JARPATH=%CMDPATH%pdfbox-app-3.0.0-alpha3.jar
