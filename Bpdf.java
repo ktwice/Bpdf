@@ -43,10 +43,10 @@ public class Bpdf {
                 pdfSlice(path.toFile());
         }
     }
-    private static String getPageText(PDDocument pdd, int pno) throws IOException {
+    private static String getPageText(PDDocument pdd, int pageno) throws IOException {
         PDFTextStripper stripper = new PDFTextStripper();
-        stripper.setStartPage(pno);
-        stripper.setEndPage(pno);
+        stripper.setStartPage(pageno);
+        stripper.setEndPage(pageno);
         return stripper.getText(pdd);
     }
     private static File mkdirImages(File pdf) {
@@ -86,11 +86,11 @@ public class Bpdf {
         PDFRenderer r = new PDFRenderer(pdd);
         File dirImages = mkdirImages(f);
         int pcount = pdd.getNumberOfPages();
-        for (int pno=1; pno<=pcount; pno++) {
-            String[] orderTexts = pageTextSlice(getPageText(pdd,pno));
+        for (int pageno=1; pageno<=pcount; pageno++) {
+            String[] orderTexts = pageTextSlice(getPageText(pdd,pageno));
             if(orderTexts.length == 0) continue;
-            System.out.println(" " + orderTexts.length + " orders on page# " + pno);
-            pageImageSlice(r, pno, orderTexts, dirImages);
+            System.out.println(" " + orderTexts.length + " orders on page# " + pageno);
+            pageImageSlice(r, pageno, orderTexts, dirImages);
         }
         System.out.println("" + pcount + " pages scanned.");
         }
