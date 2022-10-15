@@ -16,7 +16,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 /**
  * buh-pdf slicer
- * @author k2-adm
+ * @author ktwice
  */
 public class Bpdf {
     final static float IMAGE_SCALE = 7; // image quality. 1 = 72 DPI  
