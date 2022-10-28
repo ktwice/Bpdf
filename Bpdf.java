@@ -1,4 +1,4 @@
-package bpdf;
+//package bpdf;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
