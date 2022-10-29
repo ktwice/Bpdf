@@ -1,4 +1,4 @@
-//package bpdf;
+package bpdf;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -28,8 +28,10 @@ public class Bpdf {
     private static void slice(File f) {
         if(f.isDirectory()) {
             try { 
+                System.out.println(f.getPath());
                 Files.newDirectoryStream(f.toPath(), "*.pdf")
                         .forEach((path)->pdfSlice(path.toFile()));
+                System.out.println("Processing of all pdf-files is completed.");
             } catch (IOException e) {
                 System.out.println("IOException *** " + e.getMessage());
             }
@@ -46,7 +48,7 @@ public class Bpdf {
             for (int pno=1; pno<=pcount; pno++) {
                 pageImageSlice(pdd, pno, dir);
             }
-//            System.out.println("" + pcount + " pages readed.");
+            System.out.println("Processing of " + pcount + " pages is completed.");
         } catch (IOException e) {
             System.out.println("IOException *** " + e.getMessage());
         }
