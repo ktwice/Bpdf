@@ -45,15 +45,28 @@ public class App
         }
     }
     private static void pdfSlice(File f) {
+        File dir = null;
+        PDFRenderer r = null;
         try {
             System.out.println(f.getPath());
             PDDocument pdd = Loader.loadPDF(f);
-String s = f.getName();
-File dir = new File(f.getParentFile(), s.substring(0, s.lastIndexOf('.')));
-dir.mkdir(); // create images-destination-dir
             int pcount = pdd.getNumberOfPages();
-            for (int pno=1; pno<=pcount; pno++) 
-                pageImageSlice(pdd, pno, dir);
+            for (int pno=1; pno<=pcount; pno++) { 
+                String[] orders = pOrderSeparator.split(pageText(pdd,pno));
+                if(orders.length < 2) continue;
+                String[] names = new String[orders.length - 1];
+                System.out.println(" " + names.length + " orders on page# " + pno);
+                for(int i=0; i<names.length; i++) {
+                    names[i] = name(orders[i]) + String.valueOf(pno);
+                }
+                if(r == null) {
+                    String s = f.getName();
+                    dir = new File(f.getParentFile(), s.substring(0, s.lastIndexOf('.')));
+                    dir.mkdir(); // create images-destination-dir
+                    r = new PDFRenderer(pdd);
+                }
+                pageImageSlice(dir, names, r.renderImage(pno - 1, IMAGE_SCALE));
+            }
             System.out.println("Processing of " + pcount + " pages is completed.");
         } catch (IOException e) {
             System.out.println("IOException *** " + e.getMessage());
@@ -66,28 +79,25 @@ dir.mkdir(); // create images-destination-dir
         stripper.setEndPage(pageno);
         return stripper.getText(pdd);
     }
-    private static boolean pageImageSlice(PDDocument pdd
-            , int pno, File dir) throws IOException {
-        String[] orders = pOrderSeparator.split(pageText(pdd,pno));
-        if(orders.length < 2)
-            return true;
-        System.out.println(" " + (orders.length - 1) + " orders on page# " + pno);
-        PDFRenderer r = new PDFRenderer(pdd);
-        BufferedImage image = r.renderImage(pno - 1, IMAGE_SCALE);
+    private static boolean pageImageSlice(File dir
+            , String[] names, BufferedImage image) throws IOException {
 // ImageIO.write(image,"JPEG",new File(dir,"p"+pno+".jpg"));
         int w = image.getWidth();
         int[] h2 = vmargins(image);
 // System.out.println("h2="+h2[0]+" "+h2[1]);
-        if(orders.length == 2)
-            return ImageIO.write(image.getSubimage(0, h2[0], w, h2[1]), "JPEG"
-                , new File(dir, name(orders[0]) + "p" + pno + ".jpg")
+        if(names.length == 1)
+            return ImageIO.write(image.getSubimage(0, h2[0], w, h2[1])
+                , "JPEG"
+                , new File(dir, names[0] + "p.jpg")
             );
         int h1 = h2[1] / 2; 
 // System.out.println("h1="+h1);
-        return ImageIO.write(image.getSubimage(0, h2[0], w, h1), "JPEG"
-            , new File(dir, name(orders[0]) + "t" + pno + ".jpg")
-        ) && ImageIO.write(image.getSubimage(0, h2[0]+h1, w, h2[1]-h1), "JPEG"
-            , new File(dir, name(orders[1]) + "b" + pno + ".jpg")
+        return ImageIO.write(image.getSubimage(0, h2[0], w, h1)
+            , "JPEG"
+            , new File(dir, names[0] + "t.jpg")
+        ) && ImageIO.write(image.getSubimage(0, h2[0]+h1, w, h2[1]-h1)
+            , "JPEG"
+            , new File(dir, names[1] + "b.jpg")
         );
     }
     private static String name(final String orderText) {
